@@ -1,0 +1,41 @@
+.container{
+  position: static;
+  width: 100%;
+  padding: 30%;
+}
+
+.display{
+  position: absolute;
+  left: 33%;
+  top: 33%;
+  font-size: xxx-large;
+}
+
+.menu{
+  position: absolute;
+  left: 33%;
+  color: white;
+  top: 50%;
+  background-color: gray;
+}
+
+.default{
+  color: green;
+}
+
+.sucess{
+  background-color: green;
+}
+
+.fail{
+  background-color: red;
+}
+
+.small-modal{
+  z-index: 1;
+  left: 33%;
+  top: 33%;
+  background-color: white;
+  position: fixed;
+  color: black;
+}
