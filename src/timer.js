@@ -11,7 +11,7 @@ class Timer extends React.Component{
         timer: new Date(),
         style:'default',
         amountEarn: 0,
-        currentTask:'',
+        currentTask:{},
         previous: [],
         countDownOn: false,
         showDetails: false,
@@ -27,17 +27,22 @@ class Timer extends React.Component{
   }
 
  componentDidMount(){
-   let data = window.localStorage.getItem('tasks') ? window.localStorage.getItem('tasks'): window.localStorage.setItem('tasks', {data:[]})
-   data = data.data
+   let data_json = window.localStorage.getItem("tasks")
+   if (!data_json){
+     data_json = "{\"data\":[], \"amountEarn\":0}"
+     window.localStorage.setItem("tasks",data_json)
+   }
+   let data = JSON.parse(data_json)
    let currentTask =JSON.parse(window.localStorage.getItem('curentTask'))
    if(currentTask){
      this.setState({countDownOn: true,
-                    amountEarn: data})
+                    amountEarn: data.amountEarn, 
+                    currentTask: currentTask})
     this.counterDown()
    }else {
      this.interval = setInterval(()=>{this.setState({timer: new Date()})
                                     },1000)
-     this.setState({amountEarn: data})}
+     this.setState({amountEarn: data.amountEarn})}
  }
 
  addTask(){
@@ -58,17 +63,25 @@ class Timer extends React.Component{
               value: form.get('value'),
               timer: new_target.valueOf()}
    window.localStorage.setItem('curentTask', JSON.stringify(newTask))
+   this.setState({currentTask: newTask})
    clearInterval(this.interval)
    this.counterDown()
  }
 
- defaultClock(){
+ defaultClock(addValue){
+   let totalCurrent = this.state.amountEarn
+   if(addValue){
+      let data = JSON.parse(window.localStorage.getItem('curentTask'))
+      totalCurrent += parseInt(data.value,10)
+   }
    window.localStorage.removeItem('curentTask')
    clearInterval(this.interval)
    this.interval = setInterval(()=>{
                                    let data = {timer: new Date(),
                                               countDownOn: false,
-                                              showSmallModal: false}
+                                              showSmallModal: false,
+                                              currentTask:{},
+                                              amountEarn:totalCurrent}
                                   this.setState(data)
                                 },1000)
  }
@@ -82,11 +95,9 @@ class Timer extends React.Component{
                                       let hoursLeft = Math.floor(seconds/3600)%24
                                       let minutesLeft = Math.floor(seconds/60)
                                       let secondsLeft = Math.floor(seconds)%60
-                                      console.log(hoursLeft)
                                       timer.setHours(hoursLeft)
                                       timer.setMinutes(minutesLeft)
                                       timer.setSeconds(secondsLeft)
-                                      console.log(timer)
                                       this.setState({timer: timer,
                                                     countDownOn:true,
                                                     adding_task: false
@@ -103,18 +114,21 @@ class Timer extends React.Component{
  }
 
  taskWasComplete(addAmount){
-   let tasksDay = window.localStorage.getItem('tasks').data
+   let tasksDay = window.localStorage.getItem('tasks')
    if(!tasksDay){
-     console.log('The getItem localStorage is not working properly');
-     tasksDay = {data:[] }
+      console.log('The getItem localStorage is not working properly');
+     tasksDay = {data:[], amountEarn: addAmount }
+   }else{
+     tasksDay = JSON.parse(tasksDay)
    }
+   tasksDay.amountEarn+=addAmount
    let currentTask = {
                       description: this.state.currentTask,
-                      value : this.state.amountEarn,
-                      sucess: addAmount}
+                      sucess: true}
    tasksDay.data.push(currentTask)
-   window.localStorage.setItem('tasks',currentTask)
-   this.defaultClock()
+   let jsonParser = JSON.stringify(tasksDay)
+   window.localStorage.setItem('tasks',jsonParser)
+   this.defaultClock(true)
  }
 
  componentWillUmnount(){
@@ -125,8 +139,8 @@ class Timer extends React.Component{
     return (
       <div className="container">
         {this.state.showSmallModal &&
-              <SmallModal name={this.state.currentTask}
-                          value={this.state.amountEarn}
+              <SmallModal name={this.state.currentTask.currentTask}
+                          value={this.state.currentTask.value}
                           complete={this.taskWasComplete}/>}
           <Display hour={this.state.timer.getHours()}
                   minute={this.state.timer.getMinutes()}
@@ -178,17 +192,13 @@ class Timer extends React.Component{
 
 function SmallModal(props){
 
-  const test = () =>{
-    console.log("This has a better feel because the variable name has some key word to know is a fuction");
-  }
-
   return(<div className="small-modal">
-          <h3>Was the Activity {props.name} complete</h3>
+          <h3>Was the Activity "{props.name}" complete</h3>
           <h4> This activity will add a value of {props.value} to your current amount</h4>
           <div className ="options">
-            <span onClick={()=> props.complete(true)}
+            <span onClick={()=> props.complete(parseInt(props.value,10))}
                   className="btn btn-primary">Yes</span>
-                <span onClick={()=> props.complete(false)}
+                <span onClick={()=> props.defaultClock(false)}
               className="btn btn-primary">No</span>
           </div>
   </div>)
@@ -218,17 +228,25 @@ function ThingsDone(props){
                         {description: "work for 30 minutes", value : 100, sucess: true},
                         {description: "work for 30 minutes", value : 100, sucess: false}
                       ]
+  const get_value = ()=>{
+      console.log("add appear movement for the activities")
+      console.log("add a third value to display the things that are still on")
+      console.log("Sum and display the activities display")
+  }
+  get_value()
   return (
     <table className="table">
       <thead>
         <tr>
           <th>Desecription</th>
+          <th>Date finish </th>
           <th>Value</th>
         </tr>
       </thead>
       <tbody>
       { number_elments.map((element, key)=><tr key={key} className={element.sucess ? "sucess" : "fail"}  >
                                 <td>{element.description}</td>
+                                <td></td>
                                 <td>{element.value}</td>
     </tr>)}
     </tbody>
