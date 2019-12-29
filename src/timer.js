@@ -113,7 +113,7 @@ class Timer extends React.Component{
    this.setState({showSmallModal:true})
  }
 
- taskWasComplete(addAmount){
+ taskWasComplete(addAmount, addTask){
    let tasksDay = window.localStorage.getItem('tasks')
    if(!tasksDay){
       console.log('The getItem localStorage is not working properly');
@@ -121,14 +121,16 @@ class Timer extends React.Component{
    }else{
      tasksDay = JSON.parse(tasksDay)
    }
-   tasksDay.amountEarn+=addAmount
+   if (addTask){
+    tasksDay.amountEarn+=addAmount  
+   }
    let currentTask = {
                       description: this.state.currentTask,
-                      sucess: true}
+                      sucess: addTask}
    tasksDay.data.push(currentTask)
    let jsonParser = JSON.stringify(tasksDay)
    window.localStorage.setItem('tasks',jsonParser)
-   this.defaultClock(true)
+   this.defaultClock(addTask)
  }
 
  componentWillUmnount(){
@@ -196,9 +198,9 @@ function SmallModal(props){
           <h3>Was the Activity "{props.name}" complete</h3>
           <h4> This activity will add a value of {props.value} to your current amount</h4>
           <div className ="options">
-            <span onClick={()=> props.complete(parseInt(props.value,10))}
+            <span onClick={()=> props.complete(parseInt(props.value,10), true)}
                   className="btn btn-primary">Yes</span>
-                <span onClick={()=> props.defaultClock(false)}
+                <span onClick={()=> props.complete(parseInt(props.value,10), false)}
               className="btn btn-primary">No</span>
           </div>
   </div>)
@@ -222,18 +224,16 @@ function Display(props){
 }
 
 function ThingsDone(props){
-
-  let number_elments = [
-                        {description: "work for 30 minutes", value : 100, sucess: false},
-                        {description: "work for 30 minutes", value : 100, sucess: true},
-                        {description: "work for 30 minutes", value : 100, sucess: false}
-                      ]
-  const get_value = ()=>{
-      console.log("add appear movement for the activities")
-      console.log("add a third value to display the things that are still on")
-      console.log("Sum and display the activities display")
-  }
-  get_value()
+  let previous_data =  window.localStorage.getItem("tasks")
+  let previous_object = JSON.parse(previous_data)
+  let rows = previous_object.data.map((previous_task, key)=>
+                            <tr key={key} className ={previous_task.sucess ? "sucess":"fail"}>
+                            <td>{previous_task.description.currentTask}</td>
+                            <td>{previous_task.description.timer}</td>
+                            <td>{previous_task.description.value}</td>
+                            </tr>
+  )
+  console.log(previous_object.data)
   return (
     <table className="table">
       <thead>
@@ -244,11 +244,7 @@ function ThingsDone(props){
         </tr>
       </thead>
       <tbody>
-      { number_elments.map((element, key)=><tr key={key} className={element.sucess ? "sucess" : "fail"}  >
-                                <td>{element.description}</td>
-                                <td></td>
-                                <td>{element.value}</td>
-    </tr>)}
+        {rows}
     </tbody>
     </table>
   )
