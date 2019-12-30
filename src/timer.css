@@ -19,6 +19,23 @@
   background-color: gray;
 }
 
+.cancell-button{
+  height: 100px;
+  width: 100px;
+  background-color: red;
+  border-radius: 50%;
+  border-color: white;
+  border: 10px;
+  display: inline-block;
+  margin-left: 100%;
+}
+
+.error-message{
+  color: red;
+  font-size: 2em;
+  transition: opacity 1s;
+}
+
 .default{
   color: green;
 }

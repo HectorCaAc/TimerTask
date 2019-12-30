@@ -16,7 +16,8 @@ class Timer extends React.Component{
         countDownOn: false,
         showDetails: false,
         adding_task: false,
-        showSmallModal: false}
+        showSmallModal: false,
+        wrongMessage:""}
     this.addTask = this.addTask.bind(this)
     this.showTodayAcomplish = this.showTodayAcomplish.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -58,14 +59,20 @@ class Timer extends React.Component{
    event.preventDefault()
    let form = new FormData(event.target)
    let new_target = moment().add(form.get('timeToFinsih'), 'm')
-   let newTask = {
-              currentTask: form.get('description'),
-              value: form.get('value'),
-              timer: new_target.valueOf()}
-   window.localStorage.setItem('curentTask', JSON.stringify(newTask))
-   this.setState({currentTask: newTask})
-   clearInterval(this.interval)
-   this.counterDown()
+   let taskValue = form.get('value')
+   if (taskValue > -1){
+    let newTask = {
+      currentTask: form.get('description'),
+      value: taskValue,
+      timer: new_target.valueOf()}
+      window.localStorage.setItem('curentTask', JSON.stringify(newTask))
+      this.setState({currentTask: newTask})
+      clearInterval(this.interval)
+      this.counterDown()
+   }else{
+      this.setState({wrongMessage:"Value must be greater than 0"})
+   }
+
  }
 
  defaultClock(addValue){
@@ -132,7 +139,6 @@ class Timer extends React.Component{
    window.localStorage.setItem('tasks',jsonParser)
    this.defaultClock(addTask)
  }
-
  componentWillUmnount(){
   clearInterval(this.interval)
 }
@@ -149,13 +155,17 @@ class Timer extends React.Component{
                   seconds={this.state.timer.getSeconds()}
                   style={this.state.style}
           />
-        <div className="menu">
-            <h2>Total value of today <span className="badge badge-light">{this.state.amountEarn}</span></h2>
+          {this.state.countDownOn &&
+            <span className="cancell-button" onClick={()=>this.defaultClock(false)}>
+            </span>}
+            <div className="menu">
+              <h2>Total value of today <span className="badge badge-light">{this.state.amountEarn}</span></h2>
             {!this.state.countDownOn &&
             <div className="btn btn-primary" onClick={()=>this.addTask()}>
               New Activity
               {this.state.adding_task &&
                 <form onSubmit={this.handleSubmit}>
+                    <div className="error-message">{this.state.wrongMessage}</div>
                     <div className="form-group">
                         <label htmlFor="task">Description of the task</label>
                         <input type="text" className="form-control" id="task" name="description"></input>
