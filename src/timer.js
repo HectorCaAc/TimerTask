@@ -156,8 +156,13 @@ class Timer extends React.Component{
                   style={this.state.style}
           />
           {this.state.countDownOn &&
-            <span className="cancell-button" onClick={()=>this.defaultClock(false)}>
-            </span>}
+            <span>
+              <div className="cancell-button" onClick={()=>this.defaultClock(false)}>
+              </div>
+              <div className="complete-button" onClick={()=>this.taskWasComplete(parseInt(this.state.currentTask.value,10),true)}>
+              </div>
+            </span>
+            }
             <div className="menu">
               <h2>Total value of today <span className="badge badge-light">{this.state.amountEarn}</span></h2>
             {!this.state.countDownOn &&
