@@ -18,6 +18,7 @@ class Timer extends React.Component{
         adding_task: false,
         showSmallModal: false,
         wrongMessage:""}
+    this.cleanYesterdayTask = this.cleanYesterdayTask.bind(this)
     this.addTask = this.addTask.bind(this)
     this.showTodayAcomplish = this.showTodayAcomplish.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -28,6 +29,7 @@ class Timer extends React.Component{
   }
 
  componentDidMount(){
+   this.cleanYesterdayTask()
    let data_json = window.localStorage.getItem("tasks")
    if (!data_json){
      data_json = "{\"data\":[], \"amountEarn\":0}"
@@ -44,6 +46,29 @@ class Timer extends React.Component{
      this.interval = setInterval(()=>{this.setState({timer: new Date()})
                                     },1000)
      this.setState({amountEarn: data.amountEarn})}
+ }
+
+ cleanYesterdayTask(){
+    // string with data of two days
+    //  let data_previous = "{\"data\":[{\"description\":{\"currentTask\":\"TEST\",\"value\":\"1000\",\"timer\":1577664760478},\"sucess\":false},{\"description\":{\"currentTask\":\"test\",\"value\":\"1\",\"timer\":1577667061399}},{\"description\":{\"currentTask\":\"TEST\",\"value\":\"100\",\"timer\":1577667239844},\"sucess\":true},{\"description\":{\"currentTask\":\"WATCH SILLICON VALLEY\",\"value\":\"1000\",\"timer\":1577674704333},\"sucess\":true},{\"description\":{\"currentTask\":\"TODAY TASK\",\"value\":\"1000\",\"timer\":1577915613065},\"sucess\":true},{\"description\":{\"currentTask\":\"WATCHIN youtube\",\"value\":\"500\",\"timer\":1577917334211},\"sucess\":true}],\"amountEarn\":2600}"
+    //  window.localStorage.removeItem("tasks")
+    //  window.localStorage.setItem("tasks",data_previous)
+     let date = new Date()
+     date.setHours(0,0,1)
+     let timer_set = window.localStorage.getItem("tasks")
+     let tasks_objects = JSON.parse(timer_set)
+     console.log(tasks_objects)
+     console.log(date.getTime())
+     let localStorage_data = {
+                        data:[],
+                        amountEarn: 0
+     }
+     let filter = tasks_objects.data.filter((tasks)=> tasks.description.timer > date.getTime())
+     localStorage_data.data = filter
+     let sum = filter.reduce((a,b)=> b.sucess ? a + parseInt(b.description.value,10): 0, 0)
+     localStorage_data.amountEarn = sum
+     let data_to_store = JSON.stringify(localStorage_data)
+     window.localStorage.setItem("tasks", data_to_store)
  }
 
  addTask(){
@@ -239,16 +264,20 @@ function Display(props){
 }
 
 function ThingsDone(props){
-  let previous_data =  window.localStorage.getItem("tasks")
-  let previous_object = JSON.parse(previous_data)
-  let rows = previous_object.data.map((previous_task, key)=>
+
+  const createRows=()=>{
+    let previous_data =  window.localStorage.getItem("tasks")
+    let previous_object = JSON.parse(previous_data)
+    let rows = previous_object.data.map((previous_task, key)=>
                             <tr key={key} className ={previous_task.sucess ? "sucess":"fail"}>
                             <td>{previous_task.description.currentTask}</td>
                             <td>{previous_task.description.timer}</td>
                             <td>{previous_task.description.value}</td>
                             </tr>
-  )
-  console.log(previous_object.data)
+    )
+    return rows
+  }
+  
   return (
     <table className="table">
       <thead>
@@ -259,7 +288,7 @@ function ThingsDone(props){
         </tr>
       </thead>
       <tbody>
-        {rows}
+        {createRows()}
     </tbody>
     </table>
   )
