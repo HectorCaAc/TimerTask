@@ -1,22 +1,40 @@
+/* thins that I want to improve of the UI
+  - In a small screen it blocks the block
+  - In a samll screen the Show today Sucess button get out of 
+    the screen 
+  - Improve the small modal
+  - When the modal appear make the opacity of the container increase
+    and not be able to interact with any other element
+*/
+
 .container{
-  position: static;
   width: 100%;
-  padding: 30%;
+  display: grid ;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(3, 1fr) 10% 10% repeat(3, 1fr); 
 }
 
 .display{
-  position: absolute;
-  left: 33%;
-  top: 33%;
+  grid-column: 3/6;
+  grid-row: 3;
   font-size: xxx-large;
+  align-self: center;
+}
+
+.clock{
+
 }
 
 .menu{
-  position: absolute;
-  left: 33%;
+  grid-column: 3/5;
+  grid-row:4;
   color: white;
-  top: 50%;
-  background-color: gray;
+  /* background-color: gray; */
+}
+
+.buttons{
+  grid-column: 5;
+  grid-row:3;
 }
 
 .cancell-button{
@@ -27,7 +45,6 @@
   border-color: white;
   border: 10px;
   display: inline-block;
-  margin-left: 70%;
 }
 
 .complete-button{
@@ -59,9 +76,25 @@
 
 .small-modal{
   z-index: 1;
-  left: 33%;
-  top: 33%;
   background-color: white;
   position: fixed;
   color: black;
+  margin-top: 33%;
+}
+
+.things-done{
+  grid-column: 6/8;
+  grid-row: 1/6;
+}
+
+.new-activity{
+  justify-self: stretch;
+  grid-column: 1;
+  grid-row: 2/8;
+  background-color: #0062cc;
+  padding: 5%;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  font-size: large;
+  font-family: fantasy;
 }

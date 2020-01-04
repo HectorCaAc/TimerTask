@@ -181,52 +181,54 @@ class Timer extends React.Component{
                   style={this.state.style}
           />
           {this.state.countDownOn &&
-            <span>
+            <span className="buttons clock">
               <div className="cancell-button" onClick={()=>this.defaultClock(false)}>
               </div>
               <div className="complete-button" onClick={()=>this.taskWasComplete(parseInt(this.state.currentTask.value,10),true)}>
               </div>
             </span>
             }
-            <div className="menu">
+          <div className="menu">
               <h2>Total value of today <span className="badge badge-light">{this.state.amountEarn}</span></h2>
             {!this.state.countDownOn &&
-            <div className="btn btn-primary" onClick={()=>this.addTask()}>
-              New Activity
-              {this.state.adding_task &&
-                <form onSubmit={this.handleSubmit}>
-                    <div className="error-message">{this.state.wrongMessage}</div>
-                    <div className="form-group">
-                        <label htmlFor="task">Description of the task</label>
-                        <input type="text" className="form-control" id="task" name="description"></input>
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="value">Reward for finish the task</label>
-                        <input type="number" className="form-control" id="number" name="value"></input>
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor="timer">How many minutes required to finish the tasks</label>
-                      <input type="number" className="form-control" id="timer" name="timeToFinsih"></input>
-                    </div>
-                        <button className="btn btn-warning">Start Countdownd</button>
-                </form>
-              }
-            </div>
-          }
-          {this.state.showDetails &&
-            <div>
-             <ThingsDone/>
-              <div className="btn btn-primary"
-                onClick={this.showTodayAcomplish}>
-                 Hide today Details
-               </div>
-            </div>}
+             <div className="btn btn-primary" onClick={()=>this.addTask()}>
+               New Activity
+              </div>
+            }
           {!this.state.showDetails &&
               <div className="btn btn-primary" onClick={this.showTodayAcomplish}>
                   Show Today Success
               </div>
           }
         </div>
+        {this.state.showDetails &&
+            <div className="things-done">
+             <ThingsDone/>
+              <div className="btn btn-primary"
+                onClick={this.showTodayAcomplish}>
+                 Hide today Details
+               </div>
+            </div>}
+        {this.state.adding_task &&
+          <div className="new-activity">
+            <form onSubmit={this.handleSubmit}>
+                <div className="error-message">{this.state.wrongMessage}</div>
+                <div className="form-group">
+                    <label htmlFor="task">Description of the task</label>
+                    <input type="text" className="form-control" id="task" name="description"></input>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="value">Reward for finish the task</label>
+                    <input type="number" className="form-control" id="number" name="value"></input>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="timer">How many minutes required to finish the tasks</label>
+                  <input type="number" className="form-control" id="timer" name="timeToFinsih"></input>
+                </div>
+                <button className="btn btn-warning">Start Countdownd</button>
+            </form>
+          </div>
+          }
     </div>
     )
   }
@@ -255,7 +257,7 @@ function Display(props){
   minute = minute.length === 2 ? minute: '0'+minute
   second = second.length === 2 ? second: '0'+second
   return (
-    <div className={"display "+props.style}>
+    <div className={"display clock "+props.style}>
       <span>{hour}</span>:
       <span>{minute}</span>:
       <span>{second}</span>
