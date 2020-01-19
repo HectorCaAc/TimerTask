@@ -9,32 +9,24 @@
 
 .container{
   width: 100%;
-  display: grid ;
-  grid-template-columns: repeat(8, 1fr);
-  grid-template-rows: repeat(3, 1fr) 10% 10% repeat(3, 1fr); 
+  display:flex;
+  justify-content: space-between;
+  height: 100vh;
 }
 
 .display{
-  grid-column: 3/6;
-  grid-row: 3;
   font-size: xxx-large;
   align-self: center;
 }
 
-.clock{
-
-}
-
 .menu{
-  grid-column: 3/5;
-  grid-row:4;
   color: white;
-  /* background-color: gray; */
 }
 
+.main-item{
+  align-self: center;
+}
 .buttons{
-  grid-column: 5;
-  grid-row:3;
 }
 
 .cancell-button{
@@ -83,14 +75,13 @@
 }
 
 .things-done{
-  grid-column: 6/8;
-  grid-row: 1/6;
+}
+.activity{
+  align-self: center;
 }
 
 .new-activity{
   justify-self: stretch;
-  grid-column: 1;
-  grid-row: 2/8;
   background-color: #0062cc;
   padding: 5%;
   border: 1px solid transparent;
